@@ -1,3 +1,4 @@
+import colors from 'colors';
 function logger(req, res, next) {
   const matchedColors = {
     GET: 'green',
@@ -6,11 +7,11 @@ function logger(req, res, next) {
     DELETE: 'red',
   };
 
-  const colors = matchedColors[req.method];
+  const color = matchedColors[req.method];
 
-  console.log(`${req.method} ${req.protocol}://${req.get('host')}${req.url}`)[
-    colors
-  ];
+  console.log(
+    `${req.method} ${req.protocol}://${req.get('host')}${req.url}`[color]
+  );
 
   next();
 }

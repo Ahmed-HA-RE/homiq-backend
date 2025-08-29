@@ -4,6 +4,7 @@ import cors from 'cors';
 import errorHandler from './middleware/errorHandler.js';
 import logger from './middleware/logger.js';
 import projectsRoute from './routes/projects.js';
+import testimonialsRoute from './routes/testimonials.js';
 import connectDB from './config/database.js';
 
 dotenv.config();
@@ -20,6 +21,7 @@ app.use(logger);
 
 // Routes
 app.use('/api/projects', projectsRoute);
+app.use('/api/testimonials', testimonialsRoute);
 
 // Error handler
 app.use((req, res, next) => {

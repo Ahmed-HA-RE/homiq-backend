@@ -1,5 +1,5 @@
 import express from 'express';
-import { getProjects } from '../controllers/projects.js';
+import { getProjects, getProject } from '../controllers/projects.js';
 
 const router = express.Router();
 
@@ -7,5 +7,10 @@ const router = express.Router();
 //@description  Get all the projects
 //@access       Public
 router.get('/', getProjects);
+
+//@route        GET /api/projects/:id
+//@description  Get single project
+//@access       Public
+router.get('/:id', getProject);
 
 export default router;

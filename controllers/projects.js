@@ -18,12 +18,13 @@ export const getProjects = async (req, res, next) => {
     next(err);
   }
 };
+
 //@route        GET /api/projects/:id
 //@description  Get single project
 //@access       Public
 export const getProject = async (req, res, next) => {
   try {
-    const id = req.params.id.toString();
+    const id = +req.params.id.toString();
 
     const project = await Project.findById(id);
 
@@ -38,3 +39,33 @@ export const getProject = async (req, res, next) => {
     next(err);
   }
 };
+
+//@route        GET /api/projects/paginated?limit=&page=
+//@description  Get limit project
+//@access       Public
+export async function getPaginatedProjects(req, res, next) {
+  try {
+    const page = +req.query.page;
+    const limit = +req.query.limit;
+
+    if (!page || !limit) {
+      const err = new Error('page and limit fileds are required');
+      err.status = 403;
+      throw err;
+    }
+
+    const skip = (page - 1) * limit;
+    const total = await Project.countDocuments();
+    const projects = await Project.find().skip(skip).limit(limit);
+
+    res.status(200).json({
+      page,
+      limit,
+      total,
+      pages: Math.ceil(total / limit),
+      projects: projects.length > 0 ? projects : [],
+    });
+  } catch (error) {
+    next(error);
+  }
+}

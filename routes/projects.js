@@ -1,5 +1,9 @@
 import express from 'express';
-import { getProjects, getProject } from '../controllers/projects.js';
+import {
+  getProjects,
+  getProject,
+  getPaginatedProjects,
+} from '../controllers/projects.js';
 
 const router = express.Router();
 
@@ -7,6 +11,11 @@ const router = express.Router();
 //@description  Get all the projects
 //@access       Public
 router.get('/', getProjects);
+
+//@route        GET /api/projects/paginated?limit=&page=
+//@description  Get limit project
+//@access       Public
+router.get('/paginate', getPaginatedProjects);
 
 //@route        GET /api/projects/:id
 //@description  Get single project

@@ -69,3 +69,23 @@ export async function getPaginatedProjects(req, res, next) {
     next(error);
   }
 }
+
+//@route        GET /api/projects/latest
+//@description  Get all the latest projects
+//@access       Public
+export async function getLatestProjects(req, res, next) {
+  try {
+    const latestProjects = await Project.find()
+      .sort({ createdAt: -1 })
+      .limit(3);
+    if (!latestProjects) {
+      const err = new Error('No Projects Been Found');
+      err.status = 404;
+      throw err;
+    }
+
+    res.status(200).json(latestProjects);
+  } catch (error) {
+    next(error);
+  }
+}

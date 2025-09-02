@@ -19,26 +19,25 @@ export const getProjects = async (req, res, next) => {
   }
 };
 
-//@route        GET /api/projects/:id
-//@description  Get single project
+//@route        GET /api/projects/latest
+//@description  Get all the latest projects
 //@access       Public
-export const getProject = async (req, res, next) => {
+export async function getLatestProjects(req, res, next) {
   try {
-    const id = +req.params.id.toString();
-
-    const project = await Project.findById(id);
-
-    if (!project) {
-      const err = new Error('No project been found');
+    const latestProjects = await Project.find()
+      .sort({ createdAt: -1 })
+      .limit(3);
+    if (!latestProjects) {
+      const err = new Error('No Projects Been Found');
       err.status = 404;
       throw err;
     }
 
-    res.status(200).json(project);
-  } catch (err) {
-    next(err);
+    res.status(200).json(latestProjects);
+  } catch (error) {
+    next(error);
   }
-};
+}
 
 //@route        GET /api/projects/paginated?limit=&page=
 //@description  Get limit project
@@ -70,22 +69,25 @@ export async function getPaginatedProjects(req, res, next) {
   }
 }
 
-//@route        GET /api/projects/latest
-//@description  Get all the latest projects
+//@route        GET /api/projects/:id
+//@description  Get single project
 //@access       Public
-export async function getLatestProjects(req, res, next) {
+export const getProject = async (req, res, next) => {
   try {
-    const latestProjects = await Project.find()
-      .sort({ createdAt: -1 })
-      .limit(3);
-    if (!latestProjects) {
-      const err = new Error('No Projects Been Found');
+    const id = req.params.id;
+
+    const project = await Project.findOne({ _id: id });
+
+    console.log(project);
+
+    if (!project) {
+      const err = new Error('No project been found');
       err.status = 404;
       throw err;
     }
 
-    res.status(200).json(latestProjects);
-  } catch (error) {
-    next(error);
+    res.status(200).json(project);
+  } catch (err) {
+    next(err);
   }
-}
+};

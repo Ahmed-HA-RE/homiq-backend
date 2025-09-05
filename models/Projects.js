@@ -9,6 +9,7 @@ const projectSchema = new mongoose.Schema(
     type: { type: String, required: true },
     area: { type: String },
     floor: { type: Number, min: 1, max: 6 },
+    amenities: { type: [String] },
     parking: { type: Number, min: 1 },
     beds: { type: Number, min: 1 },
     images: {

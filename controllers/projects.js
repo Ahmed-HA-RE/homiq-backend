@@ -78,8 +78,6 @@ export const getProject = async (req, res, next) => {
 
     const project = await Project.findOne({ _id: id });
 
-    console.log(project);
-
     if (!project) {
       const err = new Error('No project been found');
       err.status = 404;

@@ -5,6 +5,7 @@ import errorHandler from './middleware/errorHandler.js';
 import logger from './middleware/logger.js';
 import projectsRoute from './routes/projects.js';
 import testimonialsRoute from './routes/testimonials.js';
+import agentsRoute from './routes/agents.js';
 import connectDB from './config/database.js';
 import path from 'path';
 
@@ -26,6 +27,7 @@ app.use(logger);
 
 // Routes
 app.use('/api/projects', projectsRoute);
+app.use('/api/agents', agentsRoute);
 app.use('/api/testimonials', testimonialsRoute);
 
 app.use('/images', express.static(path.join(__dirname, 'public', 'images')));

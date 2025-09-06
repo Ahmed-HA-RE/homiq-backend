@@ -13,7 +13,7 @@ export async function getAgents(req, res, next) {
       throw err;
     }
 
-    res.status(200).json({ success: true, agents });
+    res.status(200).json({ agents });
   } catch (error) {
     next(error);
   }
@@ -42,7 +42,7 @@ export async function getLimitAgents(req, res, next) {
       throw err;
     }
 
-    res.status(200).json({ success: true, agents });
+    res.status(200).json({ agents });
   } catch (error) {
     next(error);
   }

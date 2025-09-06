@@ -2,12 +2,16 @@ import mongoose from 'mongoose';
 
 const testimonialSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true },
-    title: { type: String, required: true },
-    image: { type: String, required: true },
-    alt: { type: String, required: true },
-    rating: { type: Number, min: 1, max: 5, required: true },
-    text: { type: String, required: true },
+    name: { type: String, required: true, trim: true },
+    job: {
+      type: String,
+      required: true,
+      trim: true,
+      minLength: 2,
+      maxLength: 50,
+    },
+    alt: { type: String, required: true, trim: true },
+    message: { type: String, required: true, trim: true },
   },
   { timestamps: true }
 );

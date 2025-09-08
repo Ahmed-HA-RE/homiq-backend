@@ -4,11 +4,11 @@ export async function contactForm(req, res, next) {
   const regexes = {
     email:
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-    name: /^[a-z ,.'-]+$/i,
+    fullName: /^[a-z ,.'-]+$/i,
   };
 
   try {
-    const { email, name, message } = req.body;
+    const { email, fullName, message } = req.body;
 
     let errors = {};
 
@@ -16,8 +16,8 @@ export async function contactForm(req, res, next) {
       errors.email = 'Invalid Email';
     }
 
-    if (!name || !regexes.name.test(name) || name === '') {
-      errors.name = 'Invalid Name';
+    if (!fullName || !regexes.fullName.test(fullName) || fullName === '') {
+      errors.fullName = 'Invalid Name';
     }
 
     if (!message || message === '' || !message.length > 400) {
@@ -32,12 +32,12 @@ export async function contactForm(req, res, next) {
     }
 
     await sendEmail(
-      email.trim(),
-      name.trim(),
+      email,
+      fullName,
       `
     <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
       <h2>New Contact Us Message</h2>
-      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Name:</strong> ${fullName}</p>
       <p><strong>Email:</strong> ${email}</p>
       <p><strong>Message:</strong></p>
       <p>${message}</p>

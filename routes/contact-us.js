@@ -1,5 +1,4 @@
 import express from 'express';
-import { sendEmail } from '../utils/nodemailer.js';
 import { contactForm } from '../controllers/contact-us.js';
 
 const router = express.Router();

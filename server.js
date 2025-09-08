@@ -6,6 +6,8 @@ import logger from './middleware/logger.js';
 import projectsRoute from './routes/projects.js';
 import testimonialsRoute from './routes/testimonials.js';
 import agentsRoute from './routes/agents.js';
+import contactUsRoute from './routes/contact-us.js';
+
 import connectDB from './config/database.js';
 import path from 'path';
 
@@ -22,6 +24,7 @@ connectDB();
 // Middleware
 app.use(cors(['http://localhost:3000']));
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 app.use(logger);
 
@@ -29,6 +32,7 @@ app.use(logger);
 app.use('/api/projects', projectsRoute);
 app.use('/api/agents', agentsRoute);
 app.use('/api/testimonials', testimonialsRoute);
+app.use('/api/contact-us', contactUsRoute);
 
 app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
 

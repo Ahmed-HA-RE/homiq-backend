@@ -4,6 +4,7 @@ function errorHandler(err, req, res, next) {
   const errorMessage = {
     message: err.message,
     stack: process.env.NODE_ENV === 'production' ? '' : err.stack,
+    errors: err.errors || null,
   };
 
   res.status(statusCode).json(errorMessage);

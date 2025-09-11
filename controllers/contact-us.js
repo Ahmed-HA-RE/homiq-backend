@@ -1,4 +1,4 @@
-import { sendEmail } from '../utils/nodemailer.js';
+import { sendEmailContact } from '../utils/nodemailer.js';
 
 export async function contactForm(req, res, next) {
   const regexes = {
@@ -20,8 +20,8 @@ export async function contactForm(req, res, next) {
       errors.fullName = 'Invalid Name';
     }
 
-    if (!message || message === '' || !message.length > 400) {
-      errors.message = 'Invalid Desription';
+    if (!message || message.trim() === '' || message.length > 400) {
+      errors.message = 'Invalid Message';
     }
 
     if (Object.keys(errors).length > 0) {
@@ -31,19 +31,7 @@ export async function contactForm(req, res, next) {
       throw err;
     }
 
-    await sendEmail(
-      email,
-      fullName,
-      `
-    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.5;">
-      <h2>New Contact Us Message</h2>
-      <p><strong>Name:</strong> ${fullName}</p>
-      <p><strong>Email:</strong> ${email}</p>
-      <p><strong>Message:</strong></p>
-      <p>${message}</p>
-    </div>
-        `
-    );
+    sendEmailContact(email, fullName, message);
 
     res.status(200).json({ message: 'Form submitted successfully' });
   } catch (error) {

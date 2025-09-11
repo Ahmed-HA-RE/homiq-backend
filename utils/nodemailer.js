@@ -15,33 +15,31 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const __filename = new URL(import.meta.url).pathname;
-const __dirname = path.join(path.dirname(__filename), '../views/contact.ejs');
+export function sendEmail(templateData, pathFile) {
+  const __filename = new URL(import.meta.url).pathname;
+  const __dirname = path.join(path.dirname(__filename), `../views/${pathFile}`);
 
-export function sendEmailContact(email, fullName, message) {
-  ejs.renderFile(
-    __dirname,
-    { email, fullName, message },
-    (err, htmlTemplate) => {
-      if (err) {
-        console.log(err);
-      } else {
-        transporter.sendMail(
-          {
-            from: `Homiq Contact <${process.env.GOOGLE_APP_EMAIL}>`,
-            to: email,
-            subject: 'Thank you for contacting Homiq',
-            html: htmlTemplate,
-          },
-          (err, info) => {
-            if (err) {
-              console.log(err);
-              return;
-            }
-            console.log(info.accepted);
+  const { email, fullName, message } = templateData;
+
+  ejs.renderFile(__dirname, templateData, (err, htmlTemplate) => {
+    if (err) {
+      console.log(err);
+    } else {
+      transporter.sendMail(
+        {
+          from: `Homiq Contact <${process.env.GOOGLE_APP_EMAIL}>`,
+          to: email,
+          subject: 'Thank you for contacting Homiq',
+          html: htmlTemplate,
+        },
+        (err, info) => {
+          if (err) {
+            console.log(err);
+            return;
           }
-        );
-      }
+          console.log(info.accepted);
+        }
+      );
     }
-  );
+  });
 }

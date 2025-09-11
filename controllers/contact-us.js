@@ -1,4 +1,4 @@
-import { sendEmailContact } from '../utils/nodemailer.js';
+import { sendEmail } from '../utils/nodemailer.js';
 
 export async function contactForm(req, res, next) {
   const regexes = {
@@ -31,7 +31,7 @@ export async function contactForm(req, res, next) {
       throw err;
     }
 
-    sendEmailContact(email, fullName, message);
+    sendEmail({ email, fullName, message }, 'contact.ejs');
 
     res.status(200).json({ message: 'Form submitted successfully' });
   } catch (error) {

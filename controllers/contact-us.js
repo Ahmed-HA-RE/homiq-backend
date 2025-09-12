@@ -31,7 +31,11 @@ export async function contactForm(req, res, next) {
       throw err;
     }
 
-    sendEmail({ email, fullName, message }, 'contact.ejs');
+    sendEmail(
+      { email, fullName, message },
+      'contact.ejs',
+      'Thank you for contacting Homiq'
+    );
 
     res.status(200).json({ message: 'Form submitted successfully' });
   } catch (error) {

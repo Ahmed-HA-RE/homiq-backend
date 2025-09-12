@@ -6,10 +6,9 @@ import logger from './middleware/logger.js';
 import projectsRoute from './routes/projects.js';
 import testimonialsRoute from './routes/testimonials.js';
 import agentsRoute from './routes/agents.js';
-import contactUsRoute from './routes/contact-us.js';
+import emailRoutes from './routes/emails.js';
 import connectDB from './config/database.js';
 import path from 'path';
-import ejs from 'ejs';
 
 const __filename = new URL(import.meta.url).pathname;
 const __dirname = path.dirname(__filename);
@@ -32,16 +31,7 @@ app.use(logger);
 app.use('/api/projects', projectsRoute);
 app.use('/api/agents', agentsRoute);
 app.use('/api/testimonials', testimonialsRoute);
-app.use('/contact', contactUsRoute);
-
-app.use('/register', (req, res, next) => {
-  res.render('contact', {
-    name: 'Ahmed',
-    email: 'ah607k@gmail.com',
-    message:
-      'Hamster HamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamsterHamster',
-  });
-});
+app.use('/emails', emailRoutes);
 
 // Static files
 app.use('/images', express.static(path.join(__dirname, 'public', 'images')));

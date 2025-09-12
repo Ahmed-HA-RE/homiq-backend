@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export function sendEmail(templateData, pathFile) {
+export function sendEmail(templateData, pathFile, subject) {
   const __filename = new URL(import.meta.url).pathname;
   const __dirname = path.join(path.dirname(__filename), `../views/${pathFile}`);
 
@@ -29,7 +29,7 @@ export function sendEmail(templateData, pathFile) {
         {
           from: `Homiq Contact <${process.env.GOOGLE_APP_EMAIL}>`,
           to: email,
-          subject: 'Thank you for contacting Homiq',
+          subject: subject,
           html: htmlTemplate,
         },
         (err, info) => {

@@ -1,11 +1,19 @@
 import express from 'express';
-import { getTestimonials } from '../controllers/testimonial.js';
+import {
+  getTestimonials,
+  sendTestimonialsForm,
+} from '../controllers/testimonial.js';
 
 const router = express.Router();
 
-//@route        GET /api/projects
-//@description  Get all the projects
+//@route        GET /api/testimonials
+//@description  Get all the testimonials
 //@access       Public
 router.get('/', getTestimonials);
+
+//@route          POST  /api/testimonials
+//@decription     Create new testimonial
+//@access         Public
+router.post('/', sendTestimonialsForm);
 
 export default router;

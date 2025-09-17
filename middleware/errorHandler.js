@@ -1,14 +1,16 @@
+import z, { ZodError } from 'zod';
+
 function errorHandler(err, req, res, next) {
   console.error('Error: ', err);
-  const statusCode = err.status ? err.status : 500;
+  const statusCode = err.status || 500;
 
-  const errorMessage = {
-    message: err.message,
-    stack: process.env.NODE_ENV === 'production' ? '' : err.stack,
-    errors: err.errors || null,
-  };
+  if (err instanceof ZodError) {
+    console.log(err.message);
+    res.status(400).json(z.treeifyError(err).properties);
+  } else {
+    res.status(statusCode).json({ message: err.message });
+  }
 
-  res.status(statusCode).json(errorMessage);
   next();
 }
 

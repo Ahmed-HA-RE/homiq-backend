@@ -3,11 +3,12 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import errorHandler from './middleware/errorHandler.js';
 import logger from './middleware/logger.js';
-import projectsRoute from './routes/projects.js';
+import propertiesRoute from './routes/properties.js';
 import testimonialsRoute from './routes/testimonials.js';
 import agentsRoute from './routes/agents.js';
 import emailRoutes from './routes/emails.js';
 import connectDB from './config/database.js';
+import multer from 'multer';
 import path from 'path';
 
 const __filename = new URL(import.meta.url).pathname;
@@ -19,16 +20,20 @@ const PORT = process.env.PORT || 8000;
 const app = express();
 connectDB();
 
+// multer setup
+// const upload = multer({ dest: '/public/images' });
+
 app.set('view engine', 'ejs');
 
 // Middleware
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
 app.use(logger);
 
 // Routes
-app.use('/api/projects', projectsRoute);
+app.use('/api/properties', propertiesRoute);
 app.use('/api/agents', agentsRoute);
 app.use('/api/testimonials', testimonialsRoute);
 app.use('/emails', emailRoutes);

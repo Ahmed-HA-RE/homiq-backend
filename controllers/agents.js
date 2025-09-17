@@ -13,7 +13,7 @@ export async function getAgents(req, res, next) {
       throw err;
     }
 
-    res.status(200).json({ agents });
+    res.status(200).json(agents);
   } catch (error) {
     next(error);
   }

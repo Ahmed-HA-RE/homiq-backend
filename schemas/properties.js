@@ -38,13 +38,7 @@ export const propertySchema = z.object({
     .number({ error: 'Bathrooms must be a number' })
     .min(1, { error: 'Bathrooms must be at least 1' })
     .max(10, { error: 'Bathrooms cannot exceed 10' }),
-  amenities: z.preprocess((val) => {
-    if (typeof val === 'string') {
-      return [val];
-    } else if (Array.isArray(val)) {
-      return val;
-    }
-  }, z.array(z.string().min(1, { error: 'Should include at least 1 amenity' }))),
+
   parking: z.coerce
     .number({ error: 'Garage must be number' })
     .min(1, { error: 'Garage must be at least 1' })

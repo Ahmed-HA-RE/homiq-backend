@@ -10,7 +10,6 @@ const propertySchema = new mongoose.Schema(
     area: { type: Number },
     floors: { type: Number, min: 1, max: 5 },
     Bathrooms: { type: Number, min: 1, max: 10 },
-    amenities: { type: [String] },
     parking: { type: Number, min: 1 },
     beds: { type: Number, min: 1 },
     images: {

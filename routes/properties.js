@@ -16,6 +16,7 @@ console.log(__dirname);
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const isInterior = file.fieldname === 'interior';
+    console.log(file);
     cb(
       null,
       path.join(
@@ -28,7 +29,6 @@ const storage = multer.diskStorage({
   },
 
   filename: (req, file, cb) => {
-    const date = new Date();
     cb(null, file.originalname);
   },
 });
@@ -64,8 +64,8 @@ router.get('/:id', getProperty);
 router.post(
   '/',
   upload.fields([
-    { name: 'interior', maxCount: 1 },
-    { name: 'exterior', maxCount: 2 },
+    { name: 'interior', maxCount: 2 },
+    { name: 'exterior', maxCount: 1 },
   ]),
   createProperty
 );

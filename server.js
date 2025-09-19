@@ -8,7 +8,6 @@ import testimonialsRoute from './routes/testimonials.js';
 import agentsRoute from './routes/agents.js';
 import emailRoutes from './routes/emails.js';
 import connectDB from './config/database.js';
-import multer from 'multer';
 import path from 'path';
 
 const __filename = new URL(import.meta.url).pathname;
@@ -19,9 +18,6 @@ const PORT = process.env.PORT || 8000;
 
 const app = express();
 connectDB();
-
-// multer setup
-// const upload = multer({ dest: '/public/images' });
 
 app.set('view engine', 'ejs');
 

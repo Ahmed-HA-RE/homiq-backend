@@ -1,5 +1,6 @@
 import Property from '../models/Property.js';
 import { propertySchema } from '../schemas/properties.js';
+import mongoose from 'mongoose';
 
 //@route        GET /api/properties
 //@description  Get all the properties
@@ -41,7 +42,7 @@ export async function getLatestProperties(req, res, next) {
 }
 
 //@route        GET /api/properties/paginated?limit=&page=
-//@description  Get limit project
+//@description  Get limit property
 //@access       Public
 export async function getPaginatedProperties(req, res, next) {
   try {
@@ -74,11 +75,17 @@ export async function getPaginatedProperties(req, res, next) {
 }
 
 //@route        GET /api/properties/:id
-//@description  Get single project
+//@description  Get single property
 //@access       Public
 export const getProperty = async (req, res, next) => {
   try {
     const id = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      const err = new Error('No property been found');
+      err.status = 404;
+      throw err;
+    }
 
     const property = await Property.findOne({ _id: id });
 
@@ -95,7 +102,7 @@ export const getProperty = async (req, res, next) => {
 };
 
 //@route        POST /api/properties
-//@description  Create new  property
+//@description  Create new property
 //@access       Private
 export const createProperty = async (req, res, next) => {
   try {
@@ -111,7 +118,6 @@ export const createProperty = async (req, res, next) => {
       beds,
       parking,
       location,
-      amenities,
     } = parsed;
 
     const interior = req.files.interior;
@@ -136,7 +142,6 @@ export const createProperty = async (req, res, next) => {
       beds: +beds,
       parking: +parking,
       location,
-      amenities,
       images: {
         interior: req.files.interior.map((file) => file.originalname),
         exterior: req.files.exterior.map((file) => file.originalname),
@@ -145,8 +150,106 @@ export const createProperty = async (req, res, next) => {
 
     const data = await Property.create(newProperty);
 
-    res.status(200).json({ message: 'Created Succssffully', data });
+    res.status(201).json({ message: 'Created Succssffully', data });
   } catch (error) {
     next(error);
   }
 };
+
+//@route        PUT /api/properties/:id
+//@description  Update property
+//@access       Private
+export async function updateProperty(req, res, next) {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      const err = new Error('No property been found');
+      err.status = 404;
+      throw err;
+    }
+
+    const parsed = propertySchema.parse(req.body);
+    const {
+      name,
+      type,
+      description,
+      price,
+      area,
+      floors,
+      Bathrooms,
+      beds,
+      parking,
+      location,
+    } = parsed;
+
+    const interior = req.files.interior;
+    const exterior = req.files.exterior;
+
+    if (!interior || !exterior) {
+      const err = new Error(
+        'Must include atleast 1 interior and 1 exterior image'
+      );
+      err.status = 400;
+      throw err;
+    }
+
+    const updatedProperty = {
+      name,
+      type,
+      description,
+      price: Number(price),
+      area: +area,
+      floors: +floors,
+      Bathrooms: +Bathrooms,
+      beds: +beds,
+      parking: +parking,
+      location,
+      images: {
+        interior: req.files.interior.map((file) => file.originalname),
+        exterior: req.files.exterior.map((file) => file.originalname),
+      },
+    };
+
+    const property = await Property.findByIdAndUpdate(id, updatedProperty, {
+      runValidators: true,
+      new: true,
+    });
+
+    if (!property) {
+      const err = new Error('No property been found');
+      err.status = 404;
+      throw err;
+    }
+
+    res.status(200).json(property);
+  } catch (error) {
+    next(error);
+  }
+}
+
+//@route        DELETE /api/properties/:id
+//@description  Delete property
+//@access       Private
+export async function deleteProperty(req, res, next) {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      const err = new Error('No property been found');
+      err.status = 404;
+      throw err;
+    }
+
+    const property = await Property.findByIdAndDelete(id);
+
+    if (!property) {
+      const err = new Error('No property been found');
+      err.status = 404;
+      throw err;
+    }
+
+    res.json({ message: 'Deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+}

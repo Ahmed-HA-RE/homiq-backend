@@ -5,6 +5,8 @@ import {
   getProperties,
   getProperty,
   createProperty,
+  deleteProperty,
+  updateProperty,
 } from '../controllers/properties.js';
 import multer from 'multer';
 import path from 'path';
@@ -69,5 +71,22 @@ router.post(
   ]),
   createProperty
 );
+
+//@route        PUT /api/properties/:id
+//@description  Update property
+//@access       Private
+router.put(
+  '/:id',
+  upload.fields([
+    { name: 'interior', maxCount: 2 },
+    { name: 'exterior', maxCount: 1 },
+  ]),
+  updateProperty
+);
+
+//@route        DELETE /api/properties/:id
+//@description  Delete property
+//@access       Private
+router.delete('/:id', deleteProperty);
 
 export default router;

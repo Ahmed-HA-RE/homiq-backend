@@ -1,7 +1,6 @@
 import z from 'zod';
 
 export const propertySchema = z.object({
-  _id: z.string().optional(),
   name: z
     .string({ error: 'Property name is required ' })
     .nonempty({ error: 'Property name is required' })
@@ -17,9 +16,9 @@ export const propertySchema = z.object({
     .trim()
     .nonempty({ error: 'Location is required' }),
   type: z
-    .string({ error: 'Typs is required' })
+    .string({ error: 'Types is required' })
     .trim()
-    .nonempty({ error: 'Type is required' }),
+    .nonempty({ error: 'Typee is required' }),
   description: z
     .string({ error: 'Description is required' })
     .nonempty({ error: 'Description is required' })

@@ -7,6 +7,7 @@ import propertiesRoute from './routes/properties.js';
 import testimonialsRoute from './routes/testimonials.js';
 import agentsRoute from './routes/agents.js';
 import emailRoutes from './routes/emails.js';
+import authRoutes from './routes/auth.js';
 import connectDB from './config/database.js';
 import path from 'path';
 
@@ -32,6 +33,7 @@ app.use(logger);
 app.use('/api/properties', propertiesRoute);
 app.use('/api/agents', agentsRoute);
 app.use('/api/testimonials', testimonialsRoute);
+app.use('/api/auth', authRoutes);
 app.use('/emails', emailRoutes);
 
 // Static files

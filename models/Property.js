@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const propertySchema = new mongoose.Schema(
   {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     name: { type: String, required: true },
     price: { type: Number, required: true },
     location: { type: String, required: true },

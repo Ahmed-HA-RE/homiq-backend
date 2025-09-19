@@ -24,4 +24,9 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
+//Check if the password match
+userSchema.methods.matchedPassword = async function (existedPassword) {
+  return await bcrypt.compare(existedPassword, this.password);
+};
+
 export const User = mongoose.model('User', userSchema);

@@ -9,7 +9,7 @@ export const signUpSchema = z.object({
     .min(3, { error: 'Must be at least 3 characters' })
     .max(20, { error: 'Must not exceed 20 characters' }),
   email: z
-    .string()
+    .string({ error: 'Field is required' })
     .nonempty({ error: 'Field is required' })
     .email({ error: 'Invalid email address' }),
   password: z

@@ -2,6 +2,8 @@ import { User } from '../models/User.js';
 import { logInSchema, signUpSchema } from '../schemas/user.js';
 import { generateToken } from '../utils/generateToken.js';
 import { sendEmail } from '../utils/nodemailer.js';
+import { jwtVerify } from 'jose';
+import { JWT_SECRET } from '../utils/getJWTSECRET.js';
 
 //@route        POST /api/auth/register
 //@description  Register new user
@@ -118,4 +120,43 @@ export async function logoutUser(req, res, next) {
   });
 
   res.status(200).json({ message: 'Logged out successfully' });
+}
+
+//@route        POST /api/auth/refresh
+//@description  Generate new token by the browser
+//@access       Public
+export async function refreshToken(req, res, next) {
+  try {
+    const token = req.cookies?.refreshToken;
+    console.log(token);
+    if (!token) {
+      const err = new Error('No refresh token');
+      err.status = 401;
+      throw err;
+    }
+
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    console.log(payload);
+
+    const user = await User.findOne({ _id: payload.userId });
+    console.log(user);
+    if (!user) {
+      const err = new Error('Invalid Credentials');
+      err.status = 401;
+      throw err;
+    }
+
+    const newAccessToken = await generateToken({ userId: user._id }, '1m');
+
+    res.status(200).json({
+      accessToken: newAccessToken,
+      user: {
+        _id: user._id,
+        email: user.email,
+        name: user.name,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 }

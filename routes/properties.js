@@ -8,6 +8,7 @@ import {
   deleteProperty,
   updateProperty,
 } from '../controllers/properties.js';
+import { protect } from '../middleware/auth.js';
 import multer from 'multer';
 import path from 'path';
 
@@ -65,6 +66,7 @@ router.get('/:id', getProperty);
 //@access       Private
 router.post(
   '/',
+  protect,
   upload.fields([
     { name: 'interior', maxCount: 2 },
     { name: 'exterior', maxCount: 1 },
@@ -77,6 +79,7 @@ router.post(
 //@access       Private
 router.put(
   '/:id',
+  protect,
   upload.fields([
     { name: 'interior', maxCount: 2 },
     { name: 'exterior', maxCount: 1 },
@@ -87,6 +90,6 @@ router.put(
 //@route        DELETE /api/properties/:id
 //@description  Delete property
 //@access       Private
-router.delete('/:id', deleteProperty);
+router.delete('/:id', protect, deleteProperty);
 
 export default router;

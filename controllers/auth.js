@@ -128,7 +128,6 @@ export async function logoutUser(req, res, next) {
 export async function refreshToken(req, res, next) {
   try {
     const token = req.cookies?.refreshToken;
-    console.log(token);
     if (!token) {
       const err = new Error('No refresh token');
       err.status = 401;
@@ -136,17 +135,18 @@ export async function refreshToken(req, res, next) {
     }
 
     const { payload } = await jwtVerify(token, JWT_SECRET);
-    console.log(payload);
 
     const user = await User.findOne({ _id: payload.userId });
-    console.log(user);
     if (!user) {
       const err = new Error('Invalid Credentials');
       err.status = 401;
       throw err;
     }
 
-    const newAccessToken = await generateToken({ userId: user._id }, '1m');
+    const newAccessToken = await generateToken(
+      { userId: user._id.toString() },
+      '1m'
+    );
 
     res.status(200).json({
       accessToken: newAccessToken,

@@ -1,38 +1,16 @@
 import { sendEmail } from '../utils/nodemailer.js';
+import { contactFormSchema } from '../schemas/user.js';
 
 export async function contactForm(req, res, next) {
-  const regexes = {
-    email:
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-    fullName: /^[a-z ,.'-]+$/i,
-  };
-
   try {
-    const { email, fullName, message } = req.body;
+    const { name, email } = req.user;
+    const { message } = req.body;
 
-    let errors = {};
+    const parsedContactForm = contactFormSchema.parse({ name, email, message });
 
-    if (!email || !regexes.email.test(email) || email === '') {
-      errors.email = 'Invalid Email';
-    }
-
-    if (!fullName || !regexes.fullName.test(fullName) || fullName === '') {
-      errors.fullName = 'Invalid Name';
-    }
-
-    if (!message || message.trim() === '' || message.length > 400) {
-      errors.message = 'Invalid Message';
-    }
-
-    if (Object.keys(errors).length > 0) {
-      const err = new Error('Validation Failed');
-      err.errors = errors;
-      err.status = 400;
-      throw err;
-    }
-
+    // send email
     sendEmail(
-      { email, fullName, message },
+      parsedContactForm,
       'contact.ejs',
       'Thank you for contacting Homiq'
     );

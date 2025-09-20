@@ -27,13 +27,7 @@ export const sendTestimonialsForm = async (req, res, next) => {
   const nameRegex = /^[a-z ,.'-]+$/i;
 
   try {
-    const { name, role, feedback } = req.body;
-
-    if (!name || !nameRegex.test(name)) {
-      const err = new Error('Invalid Name');
-      err.status = 400;
-      throw err;
-    }
+    const { role, feedback } = req.body || {};
 
     if (!role) {
       const err = new Error('Role field is required!');
@@ -47,18 +41,21 @@ export const sendTestimonialsForm = async (req, res, next) => {
       throw err;
     }
 
-    const htmlTemplate = sendEmail(
-      { email: 'ah607k@gmail.com', name, role, feedback },
+    sendEmail(
+      { email: req.user.email, name: req.user.name, role, feedback },
       'reviews.ejs',
       'Thank you for sharing your review'
     );
 
-    const testimonial = await Testimonial.create({ role, feedback, name });
+    const testimonial = await Testimonial.create({
+      role,
+      feedback,
+      user: req.user._id,
+    });
 
     res.status(201).json({
       message: 'Form Submitted Successfully',
       testimonial,
-      htmlTemplate,
     });
   } catch (error) {
     next(error);

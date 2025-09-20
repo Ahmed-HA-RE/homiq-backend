@@ -136,16 +136,17 @@ export const createProperty = async (req, res, next) => {
       type,
       description,
       price: Number(price),
-      area: +area,
-      floors: +floors,
-      Bathrooms: +Bathrooms,
-      beds: +beds,
-      parking: +parking,
+      area: Number(area),
+      floors: Number(floors),
+      Bathrooms: Number(Bathrooms),
+      beds: Number(beds),
+      parking: Number(parking),
       location,
       images: {
         interior: req.files.interior.map((file) => file.originalname),
         exterior: req.files.exterior.map((file) => file.originalname),
       },
+      user: req.user.id,
     };
 
     const data = await Property.create(newProperty);
@@ -210,18 +211,17 @@ export async function updateProperty(req, res, next) {
       },
     };
 
-    const property = await Property.findByIdAndUpdate(id, updatedProperty, {
-      runValidators: true,
-      new: true,
-    });
+    const property = await Property.findOne({ _id: id });
 
-    if (!property) {
-      const err = new Error('No property been found');
-      err.status = 404;
+    if (!property.user.equals(req.user._id)) {
+      const err = new Error('Not authorized to update the property');
+      err.status = 403;
       throw err;
     }
 
-    res.status(200).json(property);
+    await Property.findByIdAndUpdate(id, updatedProperty);
+
+    res.status(200).json({ message: 'Updated successfully' });
   } catch (error) {
     next(error);
   }
@@ -240,13 +240,21 @@ export async function deleteProperty(req, res, next) {
       throw err;
     }
 
-    const property = await Property.findByIdAndDelete(id);
+    const property = await Property.findOne({ _id: id });
 
     if (!property) {
-      const err = new Error('No property been found');
+      const err = new Error('Property not found');
       err.status = 404;
       throw err;
     }
+
+    if (!property.user.equals(req.user._id)) {
+      const err = new Error('Not authorized to delete this property');
+      err.status = 403;
+      throw err;
+    }
+
+    await Property.findByIdAndDelete(property._id);
 
     res.json({ message: 'Deleted successfully' });
   } catch (error) {

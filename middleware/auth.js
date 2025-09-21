@@ -23,6 +23,7 @@ export async function protect(req, res, next) {
     }
 
     const { payload } = await jwtVerify(token, JWT_SECRET);
+
     const user = await User.findOne({ _id: payload.userId }).select(
       '_id name email'
     );
@@ -47,7 +48,5 @@ export async function protect(req, res, next) {
       err.status = 401;
       next(err);
     }
-
-    next(error);
   }
 }

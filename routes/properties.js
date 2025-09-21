@@ -9,34 +9,13 @@ import {
   updateProperty,
 } from '../controllers/properties.js';
 import { protect } from '../middleware/auth.js';
-import multer from 'multer';
 import path from 'path';
+import cloudinary from '../config/cloudinary.js';
+import upload from '../config/multerConfig.js';
 
 const __filename = new URL(import.meta.url).pathname;
 const __dirname = path.dirname(__filename);
 console.log(__dirname);
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const isInterior = file.fieldname === 'interior';
-    console.log(file);
-    cb(
-      null,
-      path.join(
-        __dirname,
-        `${
-          isInterior ? '../public/images/interior' : '../public/images/exterior'
-        }`
-      )
-    );
-  },
-
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-
-const upload = multer({ storage: storage });
 
 // router setups
 const router = express.Router();
@@ -62,7 +41,7 @@ router.get('/latest', getLatestProperties);
 router.get('/:id', getProperty);
 
 //@route        POST /api/properties
-//@description  Create new  property
+//@description  Create new property
 //@access       Private
 router.post(
   '/',

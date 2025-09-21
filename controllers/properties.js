@@ -1,6 +1,7 @@
 import Property from '../models/Property.js';
 import { propertySchema } from '../schemas/properties.js';
 import mongoose from 'mongoose';
+import uploadToCloudinary from '../config/cloudinary.js';
 
 //@route        GET /api/properties
 //@description  Get all the properties
@@ -120,10 +121,20 @@ export const createProperty = async (req, res, next) => {
       location,
     } = parsed;
 
-    const interior = req.files.interior;
-    const exterior = req.files.exterior;
+    const interiorImgsURL = await Promise.all(
+      req.files.interior.map((file) =>
+        uploadToCloudinary(file.buffer, file.originalname)
+      )
+    );
+    const exteriorImgsURL = await Promise.all(
+      req.files.exterior.map((file) =>
+        uploadToCloudinary(file.buffer, file.originalname)
+      )
+    );
+    console.log(interiorImgsURL);
+    console.log(exteriorImgsURL);
 
-    if (!interior || !exterior) {
+    if (!interiorImgsURL || !exteriorImgsURL) {
       const err = new Error(
         'Must include atleast 1 interior and 1 exterior image'
       );
@@ -143,15 +154,15 @@ export const createProperty = async (req, res, next) => {
       parking: Number(parking),
       location,
       images: {
-        interior: req.files.interior.map((file) => file.originalname),
-        exterior: req.files.exterior.map((file) => file.originalname),
+        interior: interiorImgsURL.map((file) => file.url),
+        exterior: exteriorImgsURL.map((file) => file.url),
       },
       user: req.user.id,
     };
 
-    const data = await Property.create(newProperty);
+    await Property.create(newProperty);
 
-    res.status(201).json({ message: 'Created Succssffully', data });
+    res.status(201).json({ message: 'Created Succssffully' });
   } catch (error) {
     next(error);
   }

@@ -32,9 +32,9 @@ export async function registerUser(req, res, next) {
     // Set refresh token in HTTP-ONLY Cookie
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      sameSite: 'none',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       secure: process.env.NODE_ENV === 'production',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
     const htmlTemplate = sendEmail(
@@ -90,9 +90,9 @@ export async function loginUser(req, res, next) {
     // Set refresh token in HTTP-ONLY Cookie
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      sameSite: 'none',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       secure: process.env.NODE_ENV === 'production',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
     });
 
     res.status(201).json({
@@ -114,9 +114,9 @@ export async function loginUser(req, res, next) {
 export async function logoutUser(req, res, next) {
   res.clearCookie('refreshToken', {
     httpOnly: true,
-    sameSite: 'none',
-    maxAge: 30 * 24 * 60 * 60 * 1000,
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     secure: process.env.NODE_ENV === 'production',
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 
   res.status(200).json({ message: 'Logged out successfully' });

@@ -24,7 +24,7 @@ connectDB();
 app.set('view engine', 'ejs');
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({ origin: ['http://localhost:3000'], credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -36,11 +36,7 @@ app.use('/api/properties', propertiesRoute);
 app.use('/api/agents', agentsRoute);
 app.use('/api/testimonials', testimonialsRoute);
 app.use('/api/auth', authRoutes);
-app.use('/emails', emailRoutes);
-
-// Static files
-app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/api/emails', emailRoutes);
 
 // 404 handler
 app.use((req, res, next) => {

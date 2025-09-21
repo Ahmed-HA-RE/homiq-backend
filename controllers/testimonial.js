@@ -24,8 +24,6 @@ export const getTestimonials = async (req, res, next) => {
 //@decription     Create new testimonial
 //@access         Public
 export const sendTestimonialsForm = async (req, res, next) => {
-  const nameRegex = /^[a-z ,.'-]+$/i;
-
   try {
     const { role, feedback } = req.body || {};
 
@@ -48,6 +46,7 @@ export const sendTestimonialsForm = async (req, res, next) => {
     );
 
     const testimonial = await Testimonial.create({
+      name: req.user.name,
       role,
       feedback,
       user: req.user._id,

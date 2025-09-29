@@ -7,11 +7,6 @@ const testimonialSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
-    name: { type: String, required: true, trim: true },
-    role: {
-      type: String,
-      required: true,
-    },
     feedback: { type: String, required: true, trim: true },
     status: { type: String, default: 'pending' },
   },

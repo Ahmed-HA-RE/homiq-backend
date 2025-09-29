@@ -10,10 +10,6 @@ import agentsRoute from './routes/agents.js';
 import emailRoutes from './routes/emails.js';
 import authRoutes from './routes/auth.js';
 import connectDB from './config/database.js';
-import path from 'path';
-
-const __filename = new URL(import.meta.url).pathname;
-const __dirname = path.dirname(__filename);
 
 dotenv.config();
 const PORT = process.env.PORT || 8000;
@@ -22,6 +18,7 @@ const app = express();
 connectDB();
 
 app.set('view engine', 'ejs');
+app.set('query parser', 'extended');
 
 // Middleware
 app.use(

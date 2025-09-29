@@ -24,6 +24,7 @@ export const signUpSchema = z.object({
       error: 'Password must have at least one Lowercase character',
     })
     .regex(/[0-9]/, { error: 'Password must have at least one digit' }),
+  role: z.string({ error: 'role is required' }).trim().toLowerCase(),
 });
 
 export const logInSchema = signUpSchema.pick({ email: true, password: true });

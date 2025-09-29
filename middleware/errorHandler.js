@@ -5,18 +5,23 @@ function errorHandler(err, req, res, next) {
   const statusCode = err.status || 500;
 
   if (err instanceof ZodError) {
-    if (!req.body) {
-      res
-        .status(400)
-        .json({
-          errors: 'Request body is required. All fields must be provided.',
-        });
-    }
-
-    res.status(400).json({ errors: z.flattenError(err).fieldErrors });
-  } else {
-    res.status(statusCode).json({ message: err.message });
+    const errors =
+      z.flattenError(err).fieldErrors || z.flattenError(err).formErrors;
+    return res.status(400).json({ errors: errors });
   }
+
+  if (err.code === 'LIMIT_UNEXPECTED_FILE' && err.field === 'exterior') {
+    return res.status(400).json({
+      message: 'Please provide 1 exterior image only',
+    });
+  }
+  if (err.code === 'LIMIT_UNEXPECTED_FILE' && err.field === 'interior') {
+    return res.status(400).json({
+      message: 'Please provide 2 interior images only',
+    });
+  }
+
+  res.status(statusCode).json({ message: err.message });
 }
 
 export default errorHandler;

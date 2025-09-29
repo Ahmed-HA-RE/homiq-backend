@@ -10,20 +10,23 @@ import {
 } from '../controllers/properties.js';
 import { protect } from '../middleware/auth.js';
 import path from 'path';
-import cloudinary from '../config/cloudinary.js';
 import upload from '../config/multerConfig.js';
-
-const __filename = new URL(import.meta.url).pathname;
-const __dirname = path.dirname(__filename);
-console.log(__dirname);
+import advancedResults from '../middleware/advancedResults.js';
+import Property from '../models/Property.js';
 
 // router setups
 const router = express.Router();
 
-//@route        GET /api/properties
-//@description  Get all the properties
-//@access       Public
-router.get('/', getProperties);
+router
+  .route('/')
+  .get(advancedResults(Property), getProperties) // GET /api/properties
+  .post(
+    upload.fields([
+      { name: 'interior', maxCount: 2 },
+      { name: 'exterior', maxCount: 1 },
+    ]),
+    createProperty
+  ); // POST /api/properties;
 
 //@route        GET /api/properties/paginated?limit=&page=
 //@description  Get limit project
@@ -38,37 +41,17 @@ router.get('/latest', getLatestProperties);
 //@route        GET /api/properties/:id
 //@description  Get single project
 //@access       Public
-router.get('/:id', getProperty);
-
-//@route        POST /api/properties
-//@description  Create new property
-//@access       Private
-router.post(
-  '/',
-  protect,
-  upload.fields([
-    { name: 'interior', maxCount: 2 },
-    { name: 'exterior', maxCount: 1 },
-  ]),
-  createProperty
-);
-
-//@route        PUT /api/properties/:id
-//@description  Update property
-//@access       Private
-router.put(
-  '/:id',
-  protect,
-  upload.fields([
-    { name: 'interior', maxCount: 2 },
-    { name: 'exterior', maxCount: 1 },
-  ]),
-  updateProperty
-);
-
-//@route        DELETE /api/properties/:id
-//@description  Delete property
-//@access       Private
-router.delete('/:id', protect, deleteProperty);
+router
+  .route('/:id')
+  .get(getProperty) // GET /api/properties/:id
+  .put(
+    protect,
+    upload.fields([
+      { name: 'interior', maxCount: 2 },
+      { name: 'exterior', maxCount: 1 },
+    ]),
+    updateProperty
+  ) // PUT /api/properties/:id
+  .delete(protect, deleteProperty); // DELETE /api/properties/:id
 
 export default router;

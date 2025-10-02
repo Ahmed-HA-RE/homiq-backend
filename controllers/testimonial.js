@@ -21,11 +21,12 @@ export const sendTestimonialsForm = asyncHandler(async (req, res, next) => {
     throw err;
   }
 
-  sendEmail(
-    { email: req.user.email, name: req.user.name, feedback },
-    'reviews.ejs',
-    'Thank you for sharing your review'
-  );
+  await sendEmail({
+    email: req.user.email,
+    path: 'reviews.ejs',
+    subject: 'Thank you for sharing your review',
+    data: { email: req.user.email, name: req.user.name, feedback },
+  });
 
   const testimonial = await Testimonial.create({
     feedback,

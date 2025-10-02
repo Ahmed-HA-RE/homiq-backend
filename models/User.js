@@ -16,6 +16,15 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    userType: {
+      type: String,
+      enum: {
+        values: ['user', 'admin'],
+        message: 'The selected user type is not allowed',
+      },
+      required: true,
+      default: 'user',
+    },
   },
   { timestamps: true }
 );

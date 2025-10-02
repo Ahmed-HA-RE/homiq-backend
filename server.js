@@ -38,7 +38,7 @@ app.use('/api/properties', propertiesRoute);
 app.use('/api/agents', agentsRoute);
 app.use('/api/testimonials', testimonialsRoute);
 app.use('/api/auth', authRoutes);
-app.use('/api/emails', emailRoutes);
+app.use('/api/email', emailRoutes);
 
 // 404 handler
 app.use((req, res, next) => {

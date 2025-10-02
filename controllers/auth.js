@@ -43,14 +43,14 @@ export const registerUser = asyncHandler(async (req, res, next) => {
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
 
-  const htmlTemplate = sendEmail(
-    { email, name },
-    'welcome.ejs',
-    "You're in! Thanks for joining Homiq"
-  );
+  await sendEmail({
+    email,
+    subject: 'Welcome to homiq',
+    data: { name },
+    path: 'welcome.ejs',
+  });
 
   res.status(201).json({
-    htmlTemplate,
     accessToken,
     user: {
       _id: newUser._id,

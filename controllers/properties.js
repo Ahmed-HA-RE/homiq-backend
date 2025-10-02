@@ -11,51 +11,6 @@ export const getProperties = asyncHandler(async (req, res, next) => {
   res.status(200).json(res.advancedResults);
 });
 
-//@route        GET /api/properties/latest
-//@description  Get all the latest properties
-//@access       Public
-export async function getLatestProperties(req, res, next) {
-  const latestProperties = await Property.find()
-    .sort({ createdAt: -1 })
-    .limit(3);
-  if (!latestProperties) {
-    const err = new Error('No Properties Been Found');
-    err.status = 404;
-    throw err;
-  }
-
-  res.status(200).json(latestProperties);
-}
-
-//@route        GET /api/properties/paginated?limit=&page=
-//@description  Get limit property
-//@access       Public
-export const getPaginatedProperties = asyncHandler(async (req, res, next) => {
-  const page = +req.query.page;
-  const limit = +req.query.limit;
-
-  if (!page || !limit) {
-    const err = new Error('page and limit fileds are required');
-    err.status = 403;
-    throw err;
-  }
-
-  const skip = (page - 1) * limit;
-  const total = await Property.countDocuments();
-  const properties = await Property.find()
-    .skip(skip)
-    .limit(limit)
-    .sort({ createdAt: -1 });
-
-  res.status(200).json({
-    page,
-    limit,
-    total,
-    pages: Math.ceil(total / limit),
-    properties: properties.length > 0 ? properties : [],
-  });
-});
-
 //@route        GET /api/properties/:id
 //@description  Get single property
 //@access       Public

@@ -1,27 +1,14 @@
-import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
 import path from 'path';
 import ejs from 'ejs';
-
-dotenv.config();
-
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOSTNAME,
-  port: process.env.SMTP_PORT,
-  auth: {
-    user: process.env.SMTP_USERNAME,
-    pass: process.env.SMTP_PASSWORD,
-  },
-});
 
 export const sendEmail = async (options) => {
   const __filename = new URL(import.meta.url).pathname;
   const __dirname = path.join(
     path.dirname(__filename),
-    `../views/${options.path}`
+    `./views/${options.path}`
   );
 
-  const htmlTemplate = await ejs.renderFile(__dirname, options.data);
+  const htmlTemplate = ejs.renderFile(__dirname, options.data);
 
   const info = await transporter.sendMail({
     from: `Homiq Contact <${process.env.GOOGLE_APP_EMAIL}>`,
@@ -33,3 +20,5 @@ export const sendEmail = async (options) => {
   console.log('Message sent:', info.messageId);
   return info;
 };
+
+sendEmail();

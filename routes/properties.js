@@ -1,7 +1,5 @@
 import express from 'express';
 import {
-  getLatestProperties,
-  getPaginatedProperties,
   getProperties,
   getProperty,
   createProperty,
@@ -9,7 +7,6 @@ import {
   updateProperty,
 } from '../controllers/properties.js';
 import { protect } from '../middleware/auth.js';
-import path from 'path';
 import upload from '../config/multerConfig.js';
 import advancedResults from '../middleware/advancedResults.js';
 import Property from '../models/Property.js';
@@ -27,16 +24,6 @@ router
     ]),
     createProperty
   ); // POST /api/properties;
-
-//@route        GET /api/properties/paginated?limit=&page=
-//@description  Get limit project
-//@access       Public
-router.get('/paginate', getPaginatedProperties);
-
-//@route        GET /api/properties/latest
-//@description  Get all the latest properties
-//@access       Public
-router.get('/latest', getLatestProperties);
 
 //@route        GET /api/properties/:id
 //@description  Get single project

@@ -21,6 +21,17 @@ function errorHandler(err, req, res, next) {
     });
   }
 
+  if (err.code === 'ERR_JWT_EXPIRED') {
+    return res
+      .status(401)
+      .json({ message: 'Your session has expired. Please log in again.' });
+  }
+
+  if (err.code === 'ERR_JWT_INVALID') {
+    return res
+      .status(401)
+      .json({ message: 'Invalid session. Please log in again.' });
+  }
   res.status(statusCode).json({ message: err.message });
 }
 

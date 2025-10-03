@@ -1,4 +1,5 @@
 import z, { ZodError } from 'zod';
+import mongoose from 'mongoose';
 
 function errorHandler(err, req, res, next) {
   console.error('Error: ', err);
@@ -32,6 +33,13 @@ function errorHandler(err, req, res, next) {
       .status(401)
       .json({ message: 'Invalid session. Please log in again.' });
   }
+
+  if (err.name === 'CastError') {
+    return res.status(400).json({
+      message: `Oops! The ID you provided ${err.value} doesn’t look right. Please check and try again.`,
+    });
+  }
+
   res.status(statusCode).json({ message: err.message });
 }
 

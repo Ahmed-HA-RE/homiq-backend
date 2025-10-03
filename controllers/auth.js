@@ -57,6 +57,7 @@ export const registerUser = asyncHandler(async (req, res, next) => {
       name: newUser.name,
       email: newUser.email,
       role: newUser.role,
+      userType: newUser.userType,
     },
   });
 });
@@ -76,7 +77,6 @@ export const loginUser = asyncHandler(async (req, res, next) => {
   const { email, password } = loginData;
 
   const user = await User.findOne({ email });
-  console.log(user);
 
   if (!user) {
     const err = new Error('Invalid Credentials');
@@ -112,6 +112,7 @@ export const loginUser = asyncHandler(async (req, res, next) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      userType: user.userType,
     },
   });
 });
@@ -162,6 +163,7 @@ export const refreshToken = asyncHandler(async (req, res, next) => {
       email: user.email,
       name: user.name,
       role: user.role,
+      userType: user.userType,
     },
   });
 });

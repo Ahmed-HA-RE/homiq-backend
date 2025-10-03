@@ -25,7 +25,7 @@ export const protect = asyncHandler(async (req, res, next) => {
   const { payload } = await jwtVerify(token, JWT_SECRET);
 
   const user = await User.findOne({ _id: payload.userId }).select(
-    '_id name email'
+    '_id name email userType'
   );
 
   if (!user) {

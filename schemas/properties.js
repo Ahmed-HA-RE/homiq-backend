@@ -4,7 +4,7 @@ export const propertySchema = z.object({
   name: z
     .string({ error: 'Property name is required ' })
     .nonempty({ error: 'Property name is required' })
-    .regex(/^[a-zA-Z\s]+$/, { error: 'Field must only be letters' })
+    .regex(/^[a-zA-Z\s']+$/, { error: 'Field must only be letters' })
     .trim()
     .min(4, { error: 'Property Name is too short (min 4 characters)' })
     .max(50),
@@ -43,3 +43,7 @@ export const propertySchema = z.object({
     .min(1, { error: 'Garage must be at least 1' })
     .max(6, { error: 'Garage cannot exceed  6' }),
 });
+
+export const updatePropertySchema = propertySchema
+  .partial()
+  .omit({ images: true });

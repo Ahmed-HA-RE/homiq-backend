@@ -5,6 +5,7 @@ import {
   createProperty,
   deleteProperty,
   updateProperty,
+  updatePropertyImages,
 } from '../controllers/properties.js';
 import { protect } from '../middleware/auth.js';
 import upload from '../config/multerConfig.js';
@@ -18,6 +19,7 @@ router
   .route('/')
   .get(advancedResults(Property), getProperties) // GET /api/properties
   .post(
+    protect,
     upload.fields([
       { name: 'interior', maxCount: 2 },
       { name: 'exterior', maxCount: 1 },
@@ -25,20 +27,19 @@ router
     createProperty
   ); // POST /api/properties;
 
-//@route        GET /api/properties/:id
-//@description  Get single project
-//@access       Public
 router
   .route('/:id')
   .get(getProperty) // GET /api/properties/:id
-  .put(
-    protect,
-    upload.fields([
-      { name: 'interior', maxCount: 2 },
-      { name: 'exterior', maxCount: 1 },
-    ]),
-    updateProperty
-  ) // PUT /api/properties/:id
+  .put(protect, updateProperty) // PUT /api/properties/:id
   .delete(protect, deleteProperty); // DELETE /api/properties/:id
+
+router.route('/:id/update-images').put(
+  protect,
+  upload.fields([
+    { name: 'interior', maxCount: 2 },
+    { name: 'exterior', maxCount: 1 },
+  ]),
+  updatePropertyImages
+); // PUT /api/properties/:id/update-images
 
 export default router;

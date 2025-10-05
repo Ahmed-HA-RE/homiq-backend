@@ -33,7 +33,7 @@ router
   .put(protect, updateProperty) // PUT /api/properties/:id
   .delete(protect, deleteProperty); // DELETE /api/properties/:id
 
-router.route('/:id/update-images').put(
+router.route('/:id/upload-images').put(
   protect,
   upload.fields([
     { name: 'interior', maxCount: 2 },

@@ -14,8 +14,19 @@ const propertySchema = new mongoose.Schema(
     parking: { type: Number, min: 1 },
     beds: { type: Number, min: 1 },
     images: {
-      interior: [String],
-      exterior: [String],
+      interior: {
+        type: [String],
+        default: [
+          'https://res.cloudinary.com/ahmed--dev/image/upload/v1759509145/no-image_o1mqcp.jpg',
+          'https://res.cloudinary.com/ahmed--dev/image/upload/v1759509145/no-image_o1mqcp.jpg',
+        ],
+      },
+      exterior: {
+        type: [String],
+        default: [
+          'https://res.cloudinary.com/ahmed--dev/image/upload/v1759509145/no-image_o1mqcp.jpg',
+        ],
+      },
     },
   },
   { timestamps: true }

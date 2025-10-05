@@ -44,6 +44,4 @@ export const propertySchema = z.object({
     .max(6, { error: 'Garage cannot exceed  6' }),
 });
 
-export const updatePropertySchema = propertySchema
-  .partial()
-  .omit({ images: true });
+export const updatePropertySchema = propertySchema.partial();

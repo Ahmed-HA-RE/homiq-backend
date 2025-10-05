@@ -38,60 +38,19 @@ export const getProperty = asyncHandler(async (req, res, next) => {
 //@description  Create new property
 //@access       Private
 export const createProperty = asyncHandler(async (req, res, next) => {
-  if (!req.files || !req.files.interior || !req.files.exterior) {
-    const err = new Error(
-      'Please provide interior and exterior images with correct field names'
-    );
+  if (!req.body) {
+    const err = new Error('Please fill all the fields');
     err.status = 400;
     throw err;
   }
 
-  const parsed = propertySchema.parse(req.body);
-  const {
-    name,
-    type,
-    description,
-    price,
-    area,
-    floors,
-    Bathrooms,
-    beds,
-    parking,
-    location,
-  } = parsed;
+  const validatedData = propertySchema.parse(req.body);
+  const newProperty = await Property.create({
+    ...validatedData,
+    user: req.user._id,
+  });
 
-  const interiorImgsURL = await Promise.all(
-    req.files.interior.map((file) =>
-      uploadToCloudinary(file.buffer, file.originalname)
-    )
-  );
-  const exteriorImgsURL = await Promise.all(
-    req.files.exterior.map((file) =>
-      uploadToCloudinary(file.buffer, file.originalname)
-    )
-  );
-
-  const newProperty = {
-    name,
-    type,
-    description,
-    price: Number(price),
-    area: Number(area),
-    floors: Number(floors),
-    Bathrooms: Number(Bathrooms),
-    beds: Number(beds),
-    parking: Number(parking),
-    location,
-    images: {
-      interior: interiorImgsURL.map((file) => file.url),
-      exterior: exteriorImgsURL.map((file) => file.url),
-    },
-    user: req.user.id,
-  };
-
-  await Property.create(newProperty);
-
-  res.status(201).json({ message: 'Created Succssffully' });
+  res.status(201).json(newProperty);
 });
 
 //@route        PUT /api/properties/:id
@@ -118,12 +77,12 @@ export const updateProperty = asyncHandler(async (req, res, next) => {
 
   const validatedData = updatePropertySchema.parse(req.body);
 
-  await Property.findByIdAndUpdate(id, validatedData, {
+  const updatedProperty = await Property.findByIdAndUpdate(id, validatedData, {
     new: true,
     runValidators: true,
   });
 
-  res.status(200).json({ message: 'Updated successfully' });
+  res.status(200).json(updatedProperty);
 });
 
 //@route        DELETE /api/properties/:id
@@ -154,7 +113,7 @@ export const deleteProperty = asyncHandler(async (req, res, next) => {
   res.json({ message: 'Deleted successfully' });
 });
 
-//@route        PUT /api/properties/:id/update-images
+//@route        PUT /api/properties/:id/upload-images
 //@description  Update property images
 //@access       Private
 export const updatePropertyImages = asyncHandler(async (req, res, next) => {
@@ -175,6 +134,8 @@ export const updatePropertyImages = asyncHandler(async (req, res, next) => {
     err.status = 403;
     throw err;
   }
+
+  console.log(req.files);
 
   if (!req.files || !req.files.interior || !req.files.exterior) {
     const err = new Error('Please add interior and exterior images');

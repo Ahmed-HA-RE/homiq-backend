@@ -39,3 +39,5 @@ export const contactFormSchema = signUpSchema
       .min(4, { error: 'Characters must be at least 4 ' })
       .max(400, { error: 'Message must be at most 400 characters' }),
   });
+
+export const resetPasswordSchema = signUpSchema.pick({ password: true });

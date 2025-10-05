@@ -40,6 +40,13 @@ function errorHandler(err, req, res, next) {
     });
   }
 
+  if (err.name === 'ValidationError') {
+    console.log('yes');
+    // return res.status(400).json({
+    //   message: `Oops! The ID you provided ${err.value} doesn’t look right. Please check and try again.`,
+    // });
+  }
+
   res.status(statusCode).json({ message: err.message });
 }
 

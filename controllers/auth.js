@@ -1,10 +1,18 @@
 import { User } from '../models/User.js';
-import { logInSchema, signUpSchema } from '../schemas/user.js';
+import {
+  logInSchema,
+  resetPasswordSchema,
+  signUpSchema,
+} from '../schemas/user.js';
 import { generateToken } from '../utils/generateToken.js';
 import { sendEmail } from '../utils/nodemailer.js';
 import { jwtVerify } from 'jose';
 import { JWT_SECRET } from '../utils/getJWTSECRET.js';
 import asyncHandler from 'express-async-handler';
+import dotenv from 'dotenv';
+import crypto from 'crypto';
+
+dotenv.config();
 
 //@route        POST /api/auth/register
 //@description  Register new user
@@ -165,5 +173,114 @@ export const refreshToken = asyncHandler(async (req, res, next) => {
       role: user.role,
       userType: user.userType,
     },
+  });
+});
+
+//@route        POST /api/auth/recover-password
+//@description  Generate token and send is by email
+//@access       Private
+export const recoverPassword = asyncHandler(async (req, res, next) => {
+  if (!req.body || !req.body.email) {
+    const err = new Error(
+      'Please provide your email that is linked to this account in order to reset your password'
+    );
+    err.status = 400;
+    throw err;
+  }
+
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    const err = new Error(`No account found with this email`);
+    err.status = 404;
+    throw err;
+  }
+
+  // Generate a reset token
+  const resetToken = await user.generatePassToken();
+
+  const resetURL = `${process.env.RESET_PASSWORD_URL}/${resetToken}`;
+
+  await sendEmail({
+    path: 'resetpassword.ejs',
+    email,
+    subject: 'Reset password',
+    data: { resetURL },
+  });
+
+  user.save();
+
+  res
+    .status(201)
+    .json({ message: 'Sent successfully. Please check your email.' });
+});
+
+//@route        PUT /api/auth/reset-password/:resetToken
+//@description  Validate the reset token and reset password
+//@access       Private
+export const resetPassword = asyncHandler(async (req, res, next) => {
+  const { resetToken } = req.params;
+
+  if (!req.body || !req.body.password || !req.body.confirmPassword) {
+    const err = new Error(
+      'Please provide the new password you’d like to use, and confirm it by entering it again to make sure both match.'
+    );
+    err.status = 400;
+    throw err;
+  }
+
+  if (req.body.password !== req.body.confirmPassword) {
+    const err = new Error(
+      'The passwords do not match. Please make sure both fields are identical.'
+    );
+    err.status = 400;
+    throw err;
+  }
+
+  const validatedPassword = resetPasswordSchema.parse(req.body);
+
+  const resetPassToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  const user = await User.findOne({
+    resetPassToken,
+    resetPassExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    const err = new Error('Linked has expired. Request a new pasword reset.');
+    err.status = 401;
+    throw err;
+  }
+
+  const payload = { userId: user._id.toString() };
+
+  const accessToken = await generateToken(payload, '1m');
+  const refreshToken = await generateToken(payload, '30d');
+
+  // Set refresh token in HTTP-ONLY Cookie
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+
+  user.password = validatedPassword.password;
+  user.resetPassToken = undefined;
+  user.resetPassExpires = undefined;
+
+  user.save();
+
+  res.status(200).json({
+    accessToken,
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    userType: user.userType,
   });
 });

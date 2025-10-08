@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import slugify from 'slugify';
 
 const userSchema = new mongoose.Schema(
   {
@@ -25,6 +26,11 @@ const userSchema = new mongoose.Schema(
       },
       required: true,
       default: 'user',
+    },
+    avatar: {
+      type: String,
+      default:
+        'https://res.cloudinary.com/ahmed--dev/image/upload/v1755243182/default_avatar_7541d4c434.webp',
     },
     resetPassToken: String,
     resetPassExpires: Date,

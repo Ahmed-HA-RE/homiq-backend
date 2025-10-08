@@ -3,6 +3,7 @@ import { propertySchema, updatePropertySchema } from '../schemas/properties.js';
 import mongoose from 'mongoose';
 import uploadToCloudinary from '../config/cloudinary.js';
 import asyncHandler from 'express-async-handler';
+import { User } from '../models/User.js';
 
 //@route        GET /api/properties
 //@description  Get all the properties
@@ -23,7 +24,10 @@ export const getProperty = asyncHandler(async (req, res, next) => {
     throw err;
   }
 
-  const property = await Property.findOne({ _id: id });
+  const property = await Property.findOne({ _id: id }).populate({
+    path: 'user',
+    select: 'name email avatar',
+  });
 
   if (!property) {
     const err = new Error('No property been found');
@@ -187,4 +191,23 @@ export const updatePropertyImages = asyncHandler(async (req, res, next) => {
   property.save();
 
   res.status(200).json({ message: 'Uploaded Successfully' });
+});
+
+//@route        GET /api/properties/me
+//@description  Get all properties owned by a specific user
+//@access       Private
+export const getUserProperties = asyncHandler(async (req, res, next) => {
+  const { _id } = req.user;
+  console.log(req.user);
+
+  const user = await User.findOne({ _id });
+
+  if (!user) {
+    const err = new Error('No user found');
+    err.status = 404;
+    throw err;
+  }
+  const propertiesByUser = await Property.find({ user: user._id });
+
+  res.status(200).json(propertiesByUser);
 });

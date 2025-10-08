@@ -6,6 +6,7 @@ import {
   deleteProperty,
   updateProperty,
   updatePropertyImages,
+  getUserProperties,
 } from '../controllers/properties.js';
 import { protect } from '../middleware/auth.js';
 import upload from '../config/multerConfig.js';
@@ -17,7 +18,10 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(advancedResults(Property), getProperties) // GET /api/properties
+  .get(
+    advancedResults(Property, { path: 'user', select: 'name id' }),
+    getProperties
+  ) // GET /api/properties
   .post(
     protect,
     upload.fields([
@@ -26,6 +30,8 @@ router
     ]),
     createProperty
   ); // POST /api/properties;
+
+router.route('/me').get(protect, getUserProperties); // GET /api/properties/me
 
 router
   .route('/:id')

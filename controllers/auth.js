@@ -3,6 +3,7 @@ import {
   logInSchema,
   resetPasswordSchema,
   signUpSchema,
+  userContactInfoSchema,
 } from '../schemas/user.js';
 import { generateToken } from '../utils/generateToken.js';
 import { sendEmail } from '../utils/nodemailer.js';
@@ -273,10 +274,54 @@ export const resetPassword = asyncHandler(async (req, res, next) => {
   user.resetPassToken = undefined;
   user.resetPassExpires = undefined;
 
-  user.save();
+  await user.save();
 
   res.status(200).json({
     accessToken,
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    userType: user.userType,
+  });
+});
+
+//@route        GET /api/auth/me
+//@description  Get user data
+//@access       Private
+export const getMe = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user._id).select(
+    'name email avatar userType role'
+  );
+
+  if (!user) {
+    const err = new Error('No user found');
+    err.status = 404;
+    throw err;
+  }
+  res.status(200).json(user);
+});
+
+//@route        PUT /api/auth/update-contact
+//@description  Update user data
+//@access       Private
+export const updateUserContact = asyncHandler(async (req, res, next) => {
+  if (!req.body || Object.keys(req.body).length === 0) {
+    const err = new Error('Please provide the fields you want to update');
+    err.status = 400;
+    throw err;
+  }
+
+  const { email, name, role } = req.body;
+
+  const validatedData = userContactInfoSchema.parse({ email, name, role });
+
+  const user = await User.findByIdAndUpdate(req.user._id, validatedData, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
     id: user._id,
     name: user.name,
     email: user.email,

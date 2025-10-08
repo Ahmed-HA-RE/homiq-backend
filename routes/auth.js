@@ -6,7 +6,10 @@ import {
   refreshToken,
   registerUser,
   resetPassword,
+  updateUserContact,
 } from '../controllers/auth.js';
+import { protect } from '../middleware/auth.js';
+import { getMe } from '../controllers/auth.js';
 
 const router = express.Router();
 
@@ -39,5 +42,15 @@ router.post('/recover-password', recoverPassword);
 //@description  Validate the reset token and reset password
 //@access       Private
 router.put('/reset-password/:resetToken', resetPassword);
+
+//@route        PUT /api/auth/update-contact
+//@description  Update user data
+//@access       Private
+router.put('/update-contact', protect, updateUserContact);
+
+//@route        GET /api/auth/me
+//@description  Get user data
+//@access       Private
+router.get('/me', protect, getMe);
 
 export default router;

@@ -41,3 +41,11 @@ export const contactFormSchema = signUpSchema
   });
 
 export const resetPasswordSchema = signUpSchema.pick({ password: true });
+
+export const userContactInfoSchema = signUpSchema
+  .pick({
+    email: true,
+    name: true,
+    role: true,
+  })
+  .partial();

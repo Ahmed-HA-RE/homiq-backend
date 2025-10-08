@@ -13,6 +13,7 @@ const propertySchema = new mongoose.Schema(
     Bathrooms: { type: Number, min: 1, max: 10 },
     parking: { type: Number, min: 1 },
     beds: { type: Number, min: 1 },
+    amenities: [String],
     images: {
       interior: {
         type: [String],

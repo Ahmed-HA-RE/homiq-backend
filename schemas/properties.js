@@ -42,6 +42,7 @@ export const propertySchema = z.object({
     .number({ error: 'Garage must be number' })
     .min(1, { error: 'Garage must be at least 1' })
     .max(6, { error: 'Garage cannot exceed  6' }),
+  amenities: z.array(z.string()),
 });
 
 export const updatePropertySchema = propertySchema.partial();

@@ -12,6 +12,8 @@ import { JWT_SECRET } from '../utils/getJWTSECRET.js';
 import asyncHandler from 'express-async-handler';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
+import { MulterError } from 'multer';
+import uploadToCloudinary from '../config/cloudinary.js';
 
 dotenv.config();
 
@@ -303,7 +305,7 @@ export const getMe = asyncHandler(async (req, res, next) => {
 });
 
 //@route        PUT /api/auth/update-contact
-//@description  Update user data
+//@description  Update user's contact info
 //@access       Private
 export const updateUserContact = asyncHandler(async (req, res, next) => {
   if (!req.body || Object.keys(req.body).length === 0) {
@@ -327,5 +329,53 @@ export const updateUserContact = asyncHandler(async (req, res, next) => {
     email: user.email,
     role: user.role,
     userType: user.userType,
+  });
+});
+
+//@route        PUT /api/auth/update-avatar
+//@description  Update user's avatar
+//@access       Private
+export const updatedUserAvatar = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    const err = new Error('User not found');
+    err.status = 404;
+    throw err;
+  }
+
+  const avatar = req.file;
+  if (!avatar) {
+    const err = new Error(
+      'Please provide the image that you want to update your avatar with'
+    );
+    err.status = 400;
+    throw err;
+  }
+
+  if (!avatar.mimetype.startsWith('image')) {
+    const err = new Error(
+      'Please provide an avatar image with a valid format (PNG, JPG, JPEG, etc.).'
+    );
+    err.status = 400;
+    throw err;
+  }
+
+  const updatedAvatar = await uploadToCloudinary(
+    avatar.buffer,
+    avatar.originalname
+  );
+
+  user.avatar = updatedAvatar.secure_url;
+
+  await user.save();
+
+  res.status(200).json({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    userType: user.userType,
+    avatar: user.avatar,
   });
 });

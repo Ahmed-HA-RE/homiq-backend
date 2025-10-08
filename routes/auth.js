@@ -7,9 +7,11 @@ import {
   registerUser,
   resetPassword,
   updateUserContact,
+  updatedUserAvatar,
 } from '../controllers/auth.js';
 import { protect } from '../middleware/auth.js';
 import { getMe } from '../controllers/auth.js';
+import upload from '../config/multerConfig.js';
 
 const router = express.Router();
 
@@ -47,6 +49,16 @@ router.put('/reset-password/:resetToken', resetPassword);
 //@description  Update user data
 //@access       Private
 router.put('/update-contact', protect, updateUserContact);
+
+//@route        PUT /api/auth/update-avatar
+//@description  Update user's avatar
+//@access       Private
+router.put(
+  '/update-avatar',
+  protect,
+  upload.single('avatar'),
+  updatedUserAvatar
+);
 
 //@route        GET /api/auth/me
 //@description  Get user data

@@ -3,6 +3,7 @@ import {
   logInSchema,
   resetPasswordSchema,
   signUpSchema,
+  updateUserPassSchema,
   userContactInfoSchema,
 } from '../schemas/user.js';
 import { generateToken } from '../utils/generateToken.js';
@@ -12,8 +13,8 @@ import { JWT_SECRET } from '../utils/getJWTSECRET.js';
 import asyncHandler from 'express-async-handler';
 import dotenv from 'dotenv';
 import crypto from 'crypto';
-import { MulterError } from 'multer';
 import uploadToCloudinary from '../config/cloudinary.js';
+import bcrypt from 'bcryptjs';
 
 dotenv.config();
 
@@ -371,6 +372,79 @@ export const updatedUserAvatar = asyncHandler(async (req, res, next) => {
   await user.save();
 
   res.status(200).json({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    userType: user.userType,
+    avatar: user.avatar,
+  });
+});
+
+//@route        PUT /api/auth/update-password
+//@description  Update user's current password
+//@access       Private
+export const updateUserPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    const err = new Error('User not found');
+    err.status = 404;
+    throw err;
+  }
+
+  if (!req.body) {
+    const err = new Error(
+      'Please provide your current password, your new password, and confirm the new password.'
+    );
+    err.status = 400;
+    throw err;
+  }
+
+  const { password, newPassword, confirmPassword } = req.body;
+
+  const validatedData = updateUserPassSchema.parse({
+    password,
+    newPassword,
+    confirmPassword,
+  });
+
+  const isMatchedPassword = await bcrypt.compare(
+    validatedData.password,
+    user.password
+  );
+
+  if (!isMatchedPassword) {
+    const err = new Error('Current password is incorrect');
+    err.status = 401;
+    throw err;
+  }
+
+  if (newPassword !== confirmPassword) {
+    const err = new Error("Password dosen't match");
+    err.status = 400;
+    throw err;
+  }
+
+  user.password = validatedData.newPassword;
+
+  await user.save();
+
+  const payload = { userId: user._id.toString() };
+
+  const accessToken = await generateToken(payload, '1m');
+  const refreshToken = await generateToken(payload, '30d');
+
+  // Set refresh token in HTTP-ONLY Cookie
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+
+  res.status(200).json({
+    accessToken,
     id: user.id,
     name: user.name,
     email: user.email,

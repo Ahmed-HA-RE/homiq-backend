@@ -12,6 +12,7 @@
 - 🖥 **EJS (View Engine)**
 - ✅ **Zod (Validation)**
 - 🌐 **CORS**
+- 🔐 **Crypto (Node.js built-in module for secure tokens)**
 
 ## 📌 Description
 
@@ -23,6 +24,7 @@ Homiq Backend handles all server operations, including:
 - ✅ Data validation using Zod
 - ✉️ Email notifications using Nodemailer
 - 🔗 API endpoints consumed by Homiq Frontend
+- 🔐 Password recovery and reset system using secure cryptographic tokens
 
 ## 🚀 Features
 
@@ -32,6 +34,8 @@ Homiq Backend handles all server operations, including:
 - Validation with Zod
 - Email notifications via Nodemailer
 - Fully RESTful API for frontend consumption
+- Password recovery via email with reset token system
+- Cryptographic token generation using Node.js **Crypto** module
 
 ## ⚡ Installation & Run
 

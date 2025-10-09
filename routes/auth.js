@@ -8,6 +8,7 @@ import {
   resetPassword,
   updateUserContact,
   updatedUserAvatar,
+  updateUserPassword,
 } from '../controllers/auth.js';
 import { protect } from '../middleware/auth.js';
 import { getMe } from '../controllers/auth.js';
@@ -59,6 +60,11 @@ router.put(
   upload.single('avatar'),
   updatedUserAvatar
 );
+
+//@route        PUT /api/auth/update-password
+//@description  Update user's current password
+//@access       Private
+router.put('/update-password', protect, updateUserPassword);
 
 //@route        GET /api/auth/me
 //@description  Get user data

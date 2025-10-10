@@ -18,7 +18,6 @@ const advancedResults = (Model, populate) => async (req, res, next) => {
     /\b(gt|gte|lt|lte|eq|regex|in)\b/g,
     (match) => `$${match}`
   );
-  console.log(queryStr);
   query = Model.find(JSON.parse(queryStr)).populate(populate);
 
   // chain select() schema type to Model

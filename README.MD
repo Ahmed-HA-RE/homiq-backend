@@ -14,6 +14,15 @@
 - 🌐 **CORS**
 - 🔐 **Crypto (Node.js built-in module for secure tokens)**
 
+## 🧱 Security
+
+- 🧩 **CORS** – Restricts cross-origin requests
+- 🛡 **Helmet** – Secures HTTP headers
+- 🚫 **HPP (HTTP Parameter Pollution)** – Prevents duplicated query parameters
+- 🧮 **Express-Mongo-Sanitize** – Prevents NoSQL injection
+- ⚔️ **XSS Sanitizer** – Protects against cross-site scripting (XSS) attacks
+- ⏱ **Rate Limiter** – Limits repeated requests to prevent brute-force attacks
+
 ## 📌 Description
 
 Homiq Backend handles all server operations, including:
@@ -32,7 +41,7 @@ Homiq Backend handles all server operations, including:
 - Property management (add, update, delete)
 - Secure image uploads to Cloudinary
 - Validation with Zod
-- Email notifications via Nodemailer
+- Email notifications via Nodemailer and SendGrid
 - Fully RESTful API for frontend consumption
 - Password recovery via email with reset token system
 - Cryptographic token generation using Node.js **Crypto** module

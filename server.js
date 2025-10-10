@@ -14,7 +14,6 @@ import helmet from 'helmet';
 import { xss } from 'express-xss-sanitizer';
 import hpp from 'hpp';
 import limiter from './config/rateLimiter.js';
-import ExpressMongoSanitize from 'express-mongo-sanitize';
 import cors from 'cors';
 
 dotenv.config();
@@ -33,6 +32,7 @@ app.use(
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -40,7 +40,6 @@ app.use(helmet());
 app.use(xss());
 app.use(hpp());
 app.use(limiter);
-
 app.use(logger);
 
 // Routes
@@ -49,8 +48,6 @@ app.use('/api/agents', agentsRoute);
 app.use('/api/testimonials', testimonialsRoute);
 app.use('/api/auth', authRoutes);
 app.use('/api/email', emailRoutes);
-
-app.use(ExpressMongoSanitize());
 
 // 404 handler
 app.use((req, res, next) => {

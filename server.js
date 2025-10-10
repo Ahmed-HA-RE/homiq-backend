@@ -1,6 +1,5 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import errorHandler from './middleware/errorHandler.js';
 import logger from './middleware/logger.js';
@@ -10,6 +9,13 @@ import agentsRoute from './routes/agents.js';
 import emailRoutes from './routes/emails.js';
 import authRoutes from './routes/auth.js';
 import connectDB from './config/database.js';
+// API PROTECTION
+import helmet from 'helmet';
+import { xss } from 'express-xss-sanitizer';
+import hpp from 'hpp';
+import limiter from './config/rateLimiter.js';
+import ExpressMongoSanitize from 'express-mongo-sanitize';
+import cors from 'cors';
 
 dotenv.config();
 const PORT = process.env.PORT || 8000;
@@ -30,6 +36,10 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(helmet());
+app.use(xss());
+app.use(hpp());
+app.use(limiter);
 
 app.use(logger);
 
@@ -39,6 +49,8 @@ app.use('/api/agents', agentsRoute);
 app.use('/api/testimonials', testimonialsRoute);
 app.use('/api/auth', authRoutes);
 app.use('/api/email', emailRoutes);
+
+app.use(ExpressMongoSanitize());
 
 // 404 handler
 app.use((req, res, next) => {
